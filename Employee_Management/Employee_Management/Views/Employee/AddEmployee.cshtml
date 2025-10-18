@@ -1,0 +1,259 @@
+﻿@model Employee_Management.Models.EmployeeDTO
+
+@{
+    var hobbies = Model?.Hobbies ?? new List<Employee_Management.Models.Hobby>();
+}
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background: #141414;
+        color: #fff;
+        padding: 20px;
+    }
+
+    .form-container {
+        background: #1c1c1c;
+        padding: 30px;
+        border-radius: 15px;
+        max-width: 900px; /* Increased max-width for side-by-side layout */
+        margin: auto;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-control {
+        background: #2a2a2a;
+        border: none;
+        color: #fff;
+        padding: 10px;
+        border-radius: 8px;
+        width: 100%; /* Ensure full width within the column */
+        box-sizing: border-box; /* Prevent padding from increasing element width */
+    }
+
+        .form-control:focus {
+            outline: 2px solid #e50914;
+        }
+
+    .form-check {
+        margin-bottom: 10px;
+    }
+
+    .form-check-label {
+        margin-left: 8px;
+    }
+
+    .btn-primary {
+        background-color: #e50914;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-weight: bold;
+        margin-top: 20px;
+    }
+
+        .btn-primary:hover {
+            background-color: #f40612;
+        }
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-right: -15px;
+        margin-left: -15px;
+    }
+
+    .col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+        padding-right: 15px;
+        padding-left: 15px;
+        box-sizing: border-box;
+    }
+
+    .location-group .form-control {
+        margin-bottom: 5px; /* Less margin for location fields */
+    }
+</style>
+
+<div class="form-container">
+    <form asp-action="AddEmployee" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="UserId" value="@(Model?.UserId ?? 0)" />
+
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label>Name</label>
+                <input asp-for="Name" class="form-control" placeholder="Enter Name" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 form-group">
+                <label>Age</label>
+                <input asp-for="Age" type="number" class="form-control" placeholder="Enter Age" />
+                <span asp-validation-for="Age" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label>Gender</label>
+                <select id="Gender" asp-for="Gender" class="form-control">
+                    <option value="">-- Select Gender --</option>
+                    <option>Male</option>
+                    <option>Female</option>
+                    <option>Other</option>
+                </select>
+                <span asp-validation-for="Gender" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 form-group">
+                <label>Salary</label>
+                <input asp-for="Salary" type="number" step="0.01" class="form-control" placeholder="Enter Salary" />
+                <span asp-validation-for="Salary" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Contact</label>
+            <input asp-for="Contact" class="form-control" placeholder="Enter Contact" />
+            <span asp-validation-for="Contact" class="text-danger"></span>
+        </div>
+
+        <div class="row location-group">
+            <div class="col-md-4 form-group">
+                <label>Country</label>
+                <select id="CountryId" name="CountryId" class="form-control">
+                    <option value="">-- Select Country --</option>
+                    @if (Model.Countries != null)
+                    {
+                        foreach (var c in Model.Countries)
+                        {
+                            <option value="@c.CountryId">@c.CountryName</option>
+                        }
+                    }
+                    <option value="other">Other</option>
+                </select>
+                <input type="text" id="CustomCountry" name="CustomCountry" placeholder="Enter Country" class="form-control" style="display:none;" />
+            </div>
+            <div class="col-md-4 form-group">
+                <label>State</label>
+                <select id="StateId" name="StateId" class="form-control">
+                    <option value="">-- Select State --</option>
+                    <option value="other">Other</option>
+                </select>
+                <input type="text" id="CustomState" name="CustomState" placeholder="Enter State" class="form-control" style="display:none;" />
+            </div>
+            <div class="col-md-4 form-group">
+                <label>City</label>
+                <select id="CityId" name="CityId" class="form-control">
+                    <option value="">-- Select City --</option>
+                    <option value="other">Other</option>
+                </select>
+                <input type="text" id="CustomCity" name="CustomCity" placeholder="Enter City" class="form-control" style="display:none;" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Department</label>
+            <select asp-for="DepartmentId" asp-items="@(new SelectList(Model.Departments, "DepartmentId", "DepartmentName"))" class="form-control">
+                <option value="">-- Select Department --</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Hobbies</label>
+            @if (hobbies.Any())
+            {
+                foreach (var hobby in hobbies)
+                {
+                    <div class="form-check form-check-inline">
+                        <input type="checkbox" name="SelectedHobbies" value="@hobby.HobbyId" class="form-check-input" />
+                        <label class="form-check-label">@hobby.HobbyName</label>
+                    </div>
+                }
+            }
+        </div>
+
+        <div class="form-group">
+            <label>Resume</label>
+            <input asp-for="ResumeFile" type="file" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label>Profile Image</label>
+            <input asp-for="ImageFile" type="file" class="form-control" />
+        </div>
+
+        <div class="form-group form-check">
+            <input asp-for="IsAgree" type="checkbox" class="form-check-input" />
+            <label asp-for="IsAgree" class="form-check-label">I agree to terms</label>
+        </div>
+
+        <div class="form-group form-check">
+            <input asp-for="IsWorking" type="checkbox" class="form-check-input" />
+            <label asp-for="IsWorking" class="form-check-label">Currently Working</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Save</button>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(function(){
+        $('#CountryId').change(function(){
+            var val = $(this).val();
+            if(val === 'other'){
+                $('#CustomCountry').show();
+                $('#StateId, #CityId').prop('disabled', true).empty();
+                $('#CustomState, #CustomCity').show();
+                return;
+            } else {
+                $('#CustomCountry').hide();
+                $('#StateId, #CityId').prop('disabled', false);
+                $('#CustomState, #CustomCity').hide();
+            }
+
+            $.getJSON('@Url.Action("GetStates", "Employee")', { countryId: val }, function(data){
+                var $state = $('#StateId');
+                $state.empty();
+                $state.append('<option value="">-- Select State --</option><option value="other">Other</option>');
+                $.each(data, function(i, s){
+                    $state.append('<option value="'+s.stateId+'">'+s.stateName+'</option>');
+                });
+            });
+        });
+
+        $('#StateId').change(function(){
+            var val = $(this).val();
+            var $city = $('#CityId');
+
+            if(val === 'other'){
+                $('#CustomState, #CustomCity').show();
+                $city.prop('disabled', true).empty();
+                return;
+            } else {
+                $('#CustomState, #CustomCity').hide();
+                $city.prop('disabled', false);
+            }
+
+            $.getJSON('@Url.Action("GetCities", "Employee")', { stateId: val }, function(data){
+                $city.empty();
+                $city.append('<option value="">-- Select City --</option><option value="other">Other</option>');
+                $.each(data, function(i, c){
+                    $city.append('<option value="'+c.cityId+'">'+c.cityName+'</option>');
+                });
+            });
+        });
+
+        $('#CityId').change(function(){
+            if($(this).val() === 'other'){
+                $('#CustomCity').show();
+            } else {
+                $('#CustomCity').hide();
+            }
+        });
+    });
+</script>

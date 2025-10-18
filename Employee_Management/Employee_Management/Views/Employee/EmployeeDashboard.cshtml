@@ -1,0 +1,132 @@
+﻿@model List<Employee_Management.Models.EmployeeDetails>
+
+<style>
+    body {
+        font-family: Arial,sans-serif;
+        background: #141414;
+        color: #fff;
+        padding: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        background: #1c1c1c;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #2a2a2a;
+        color: #fff;
+    }
+
+    th {
+        background: #2a2a2a;
+    }
+
+    tr:hover {
+        background: #2f2f2f;
+    }
+
+    .img-cell {
+        width: 120px;
+    }
+
+        .img-cell img {
+            width: 100px;
+            height: auto;
+            border-radius: 8px;
+        }
+
+    .resume-cell a {
+        color: #e50914;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .btn {
+        background: #e50914;
+        color: #fff;
+        padding: 6px 12px;
+        border: none;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+        .btn:hover {
+            background: #f40612;
+        }
+
+</style>
+
+<h2>Employee Dashboard</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Gender</th>
+            <th>Salary</th>
+            <th>Contact</th>
+            <th>Country</th>
+            <th>State</th>
+            <th>City</th>
+            <th>Department</th>
+            <th>Hobbies</th>
+            <th>Resume</th>
+            <th>Image</th>
+            <th>Working</th>
+            <th>Agree</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var emp in Model)
+        {
+            <tr>
+                <td>@emp.EmployeeId</td>
+                <td>@emp.Name</td>
+                <td>@emp.Age</td>
+                <td>@emp.Gender</td>
+                <td>@emp.Salary</td>
+                <td>@emp.Contact</td>
+                <td>@emp.Country?.CountryName</td>
+                <td>@emp.State?.StateName</td>
+                <td>@emp.City?.CityName</td>
+                <td>@emp.Department?.DepartmentName</td>
+                <td>
+                    @if (emp.EmployeeHobbies != null && emp.EmployeeHobbies.Any())
+                    {
+                        string hobbies = string.Join(", ", emp.EmployeeHobbies.Select(h => h.Hobby.HobbyName));
+                        @hobbies
+                    }
+                </td>
+                <td class="resume-cell">
+                    @if (!string.IsNullOrEmpty(emp.ResumePath))
+                    {
+                        <a href="@Url.Content(emp.ResumePath)" target="_blank">View Resume</a>
+                    }
+                </td>
+                <td class="img-cell">
+                    @if (!string.IsNullOrEmpty(emp.ImagePath))
+                    {
+                        <img src="@Url.Content(emp.ImagePath)" alt="Employee Image" />
+                    }
+                </td>
+                <td>@(emp.IsWorking ? "Yes" : "No")</td>
+                <td>@(emp.IsAgree ? "Yes" : "No")</td>
+                <td>
+                    <a href="@Url.Action("Edit", "Employee", new { id = emp.EmployeeId })" class="btn">Edit</a>
+                    <a href="@Url.Action("Delete", "Employee", new { id = emp.EmployeeId })" class="btn" onclick="return confirm('Are you sure?')">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
