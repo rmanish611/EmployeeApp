@@ -94,7 +94,7 @@ namespace EmployeeWebsite.Controllers
             return tokenHandler.WriteToken(token);
         }
 
-
+        // Adding a comment for testing purpose.
     }
 }
 
